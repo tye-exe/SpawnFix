@@ -1,0 +1,4 @@
+name: SpawnFix
+version: '${project.version}'
+main: me.tye.spawnfix.SpawnFix
+api-version: '1.20'
