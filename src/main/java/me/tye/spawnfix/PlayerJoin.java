@@ -1,5 +1,6 @@
 package me.tye.spawnfix;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -9,15 +10,20 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 
 public class PlayerJoin implements Listener {
 
+public static final JavaPlugin plugin = JavaPlugin.getPlugin(SpawnFix.class);
 private static final ArrayList<UUID> joined = new ArrayList<>();
-public static JavaPlugin plugin = JavaPlugin.getPlugin(SpawnFix.class);
+private static final HashMap<UUID, BukkitTask> runningTasks = new HashMap<>();
 
 @EventHandler
 public static void PlayerSpawn(PlayerJoinEvent e) {
@@ -53,10 +59,45 @@ public static void PlayerSpawn(PlayerJoinEvent e) {
         properLocation = new Location(player.getWorld(), lastLoinX, lastLoinY, lastLoinZ);
     }
 
-
-    while (!player.getLocation().equals(properLocation)) {
-        player.teleport(properLocation);
+    int retryInterval = 2;
+    try {
+        retryInterval = Integer.parseInt(String.valueOf(plugin.getConfig().get("teleport.retryInterval")));
+    } catch (NumberFormatException ex) {
+        plugin.getLogger().log(Level.WARNING, "Unable to parse the retry interval, defaulting to 2.");
     }
+
+    BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
+        private Player player;
+        private Location location;
+
+        private int timesTeleported = 1;
+
+        public Runnable init(Player player, Location location) {
+            this.player = player;
+            this.location = location;
+            return this;
+        }
+
+        @Override
+        public void run() {
+            int retryLimit = 10;
+
+            try {
+                retryLimit = Integer.parseInt(String.valueOf(plugin.getConfig().get("teleport.times")));
+            } catch (NumberFormatException e) {
+                plugin.getLogger().log(Level.WARNING, "Unable to parse the max amount of teleport times, defaulting to 10.");
+            }
+
+            if (timesTeleported > retryLimit) {
+                runningTasks.get(player.getUniqueId()).cancel();
+            }
+
+            player.teleport(location);
+            timesTeleported++;
+        }
+    }.init(player, properLocation), 2, retryInterval);
+
+    runningTasks.put(player.getUniqueId(), bukkitTask);
 
     joined.add(player.getUniqueId());
 }

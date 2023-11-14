@@ -2,3 +2,7 @@ default:
   x: 0
   y: 100
   z: 0
+
+teleport:
+  times: 10
+  retryInterval: 2
