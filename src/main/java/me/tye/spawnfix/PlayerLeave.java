@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-import static me.tye.spawnfix.PlayerJoin.plugin;
+import static me.tye.spawnfix.Util.plugin;
 
 public class PlayerLeave implements Listener {
 

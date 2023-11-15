@@ -8,6 +8,7 @@ public final class SpawnFix extends JavaPlugin {
     public void onEnable() {
         getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
         getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
+        getServer().getPluginManager().registerEvents(new PlayerRespawn(), this);
 
         saveDefaultConfig();
     }

@@ -1,8 +1,11 @@
 default:
   x: 0
-  y: 100
+  y: 64
   z: 0
 
 teleport:
   times: 10
   retryInterval: 2
+
+login: "every"
+onSpawn: true

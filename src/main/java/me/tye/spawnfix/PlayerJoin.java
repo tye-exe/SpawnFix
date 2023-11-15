@@ -9,27 +9,25 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import static me.tye.spawnfix.Util.get;
+import static me.tye.spawnfix.Util.plugin;
+
 public class PlayerJoin implements Listener {
 
-public static final JavaPlugin plugin = JavaPlugin.getPlugin(SpawnFix.class);
 private static final ArrayList<UUID> joined = new ArrayList<>();
-private static final HashMap<UUID, BukkitTask> runningTasks = new HashMap<>();
 
 @EventHandler
 public static void PlayerSpawn(PlayerJoinEvent e) {
     Player player = e.getPlayer();
 
-    if (joined.contains(player.getUniqueId())) {
+    //if the login is first, only teleport on the first join.
+    if (get("login").equals("first") && joined.contains(player.getUniqueId())) {
         return;
     }
 
@@ -44,9 +42,9 @@ public static void PlayerSpawn(PlayerJoinEvent e) {
     //if there is an error reading the data or the player hasn't joined before, use the default location.
     if (lastLoinX == null || lastLoinY == null || lastLoinZ == null) {
         try {
-            double defaultX = Double.parseDouble(String.valueOf(plugin.getConfig().get("default.x")));
-            double defaultY = Double.parseDouble(String.valueOf(plugin.getConfig().get("default.y")));
-            double defaultZ = Double.parseDouble(String.valueOf(plugin.getConfig().get("default.z")));
+            double defaultX = Double.parseDouble(get("default.x"));
+            double defaultY = Double.parseDouble(get("default.y"));
+            double defaultZ = Double.parseDouble(get("default.z"));
 
             properLocation = new Location(player.getWorld(), defaultX, defaultY, defaultZ);
         } catch (Exception ex) {
@@ -61,43 +59,13 @@ public static void PlayerSpawn(PlayerJoinEvent e) {
 
     int retryInterval = 2;
     try {
-        retryInterval = Integer.parseInt(String.valueOf(plugin.getConfig().get("teleport.retryInterval")));
+        retryInterval = Integer.parseInt(get("teleport.retryInterval"));
     } catch (NumberFormatException ex) {
         plugin.getLogger().log(Level.WARNING, "Unable to parse the retry interval, defaulting to 2.");
     }
 
-    BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
-        private Player player;
-        private Location location;
-
-        private int timesTeleported = 1;
-
-        public Runnable init(Player player, Location location) {
-            this.player = player;
-            this.location = location;
-            return this;
-        }
-
-        @Override
-        public void run() {
-            int retryLimit = 10;
-
-            try {
-                retryLimit = Integer.parseInt(String.valueOf(plugin.getConfig().get("teleport.times")));
-            } catch (NumberFormatException e) {
-                plugin.getLogger().log(Level.WARNING, "Unable to parse the max amount of teleport times, defaulting to 10.");
-            }
-
-            if (timesTeleported > retryLimit) {
-                runningTasks.get(player.getUniqueId()).cancel();
-            }
-
-            player.teleport(location);
-            timesTeleported++;
-        }
-    }.init(player, properLocation), 2, retryInterval);
-
-    runningTasks.put(player.getUniqueId(), bukkitTask);
+    BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, new Teleport(player, properLocation), 2, retryInterval);
+    Teleport.runningTasks.put(player.getUniqueId(), bukkitTask);
 
     joined.add(player.getUniqueId());
 }
