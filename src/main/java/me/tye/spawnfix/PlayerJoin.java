@@ -26,8 +26,15 @@ private static final ArrayList<UUID> joined = new ArrayList<>();
 public static void PlayerSpawn(PlayerJoinEvent e) {
     Player player = e.getPlayer();
 
+    String login = get("login");
+
+    //if login is never then always return.
+    if (login.equals("never")) {
+        return;
+    }
+
     //if the login is first, only teleport on the first join.
-    if (get("login").equals("first") && joined.contains(player.getUniqueId())) {
+    if (login.equals("first") && joined.contains(player.getUniqueId())) {
         return;
     }
 
