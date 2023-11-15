@@ -42,6 +42,7 @@ public void run() {
 
   if (timesTeleported > retryLimit) {
     runningTasks.get(player.getUniqueId()).cancel();
+    return;
   }
 
   player.teleport(location);
