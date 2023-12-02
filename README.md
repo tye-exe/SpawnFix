@@ -14,6 +14,7 @@ Supports spigot based servers from 1.17 - 1.20.2 (at time of writing).
 - x (any decimal number) - The x pos of the first ever log in location desired.
 - y (any decimal number) - The y pos of the first ever log in location desired.
 - z (any decimal number) - The z pos of the first ever log in location desired.
+- worldName (name of world) - This determines which world is the default spawn one for the player from the name of the world folder. For example, to have the over-world as the default spawn set this to "world" (This is the default over-world name for spigot. Check server.properties for your world name.). Or if you wanted it to be the nether use "world_nether".
 
 #### teleport:
 - times (any whole number) - The amount of times to teleport the player to their last login / respawn location.
