@@ -3,6 +3,7 @@ package me.tye.spawnfix;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -25,7 +26,7 @@ private int timesTeleported = 1;
  * @param player The given player.
  * @param location The given location.
  */
-public Teleport(Player player, Location location) {
+public Teleport(@NonNull Player player, @NonNull Location location) {
   this.player = player;
   this.location = location;
 }
