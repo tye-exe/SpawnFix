@@ -20,10 +20,12 @@ public static void PlayerLeaveEvent(PlayerQuitEvent e) {
   double x = logoutLocation.getX();
   double y = logoutLocation.getY();
   double z = logoutLocation.getZ();
+  String worldName = logoutLocation.getWorld().getName();
 
   player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginx"), PersistentDataType.DOUBLE, x);
   player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginy"), PersistentDataType.DOUBLE, y);
   player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginz"), PersistentDataType.DOUBLE, z);
+  player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginworld"), PersistentDataType.STRING, worldName);
 
 }
 
