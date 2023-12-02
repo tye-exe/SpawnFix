@@ -46,6 +46,16 @@ public void run() {
     return;
   }
 
+  if (location == null ) {
+    plugin.getLogger().warning("Unable to get location to correct the spawn to.");
+    return;
+  }
+
+  if (player == null) {
+    plugin.getLogger().warning("Unable to get player to the spawn of.");
+    return;
+  }
+
   player.teleport(location);
   timesTeleported++;
 }
