@@ -17,15 +17,19 @@ public static void PlayerLeaveEvent(PlayerQuitEvent e) {
   Player player = e.getPlayer();
   Location logoutLocation = e.getPlayer().getLocation();
 
+  String worldName = logoutLocation.getWorld().getName();
   double x = logoutLocation.getX();
   double y = logoutLocation.getY();
   double z = logoutLocation.getZ();
-  String worldName = logoutLocation.getWorld().getName();
+  float yaw = logoutLocation.getYaw();
+  float pitch = logoutLocation.getPitch();
 
   player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginworld"), PersistentDataType.STRING, worldName);
   player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginx"), PersistentDataType.DOUBLE, x);
   player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginy"), PersistentDataType.DOUBLE, y);
   player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginz"), PersistentDataType.DOUBLE, z);
+  player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginyaw"), PersistentDataType.FLOAT, yaw);
+  player.getPersistentDataContainer().set(new NamespacedKey(plugin, "lastloginpitch"), PersistentDataType.FLOAT, pitch);
 
 }
 

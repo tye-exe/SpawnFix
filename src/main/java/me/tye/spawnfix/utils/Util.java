@@ -51,8 +51,9 @@ public static final Logger log = plugin.getLogger();
 public static Location getDefaultSpawn() {
   return new Location(Bukkit.getWorld(Config.default_worldName.getStringConfig()),
       Config.default_x.getDoubleConfig(),
-      Config.default_x.getDoubleConfig(),
-      Config.default_x.getDoubleConfig());
+      Config.default_y.getDoubleConfig(),
+      Config.default_z.getDoubleConfig()
+  );
 }
 
 

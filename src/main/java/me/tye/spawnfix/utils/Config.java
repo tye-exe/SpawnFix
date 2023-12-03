@@ -12,10 +12,12 @@ import static me.tye.spawnfix.utils.Util.log;
 
 public enum Config {
 
+  default_worldName(String.class),
   default_x(Double.class),
   default_y(Double.class),
   default_z(Double.class),
-  default_worldName(String.class),
+  default_yaw(Float.class),
+  default_pitch(Float.class),
 
   teleport_times(Integer.class),
   teleport_retryInterval(Integer.class),
@@ -191,7 +193,7 @@ private static boolean validate(Config config, Object value) {
   //Strings can always be parsed.
   if (configType.equals(String.class)) return true;
 
-  String stringValue = String.valueOf(value);
+  String stringValue = value.toString();
 
   if (configType.equals(Double.class)) {
     try {
@@ -213,7 +215,16 @@ private static boolean validate(Config config, Object value) {
 
   if (configType.equals(Integer.class)) {
     try {
-      Integer.valueOf(stringValue);
+      Integer.parseInt(stringValue);
+      return true;
+    } catch (Exception ignore) {
+      return false;
+    }
+  }
+
+  if (configType.equals(Float.class)) {
+    try {
+      Float.parseFloat(stringValue);
       return true;
     } catch (Exception ignore) {
       return false;

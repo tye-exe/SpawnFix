@@ -41,17 +41,19 @@ public static void PlayerSpawn(PlayerJoinEvent e) {
 
     PersistentDataContainer dataContainer = player.getPersistentDataContainer();
 
+    String lastLoginWorldName = dataContainer.get(new NamespacedKey(plugin, "lastloginworld"), PersistentDataType.STRING);
     Double lastLoginX = dataContainer.get(new NamespacedKey(plugin, "lastloginx"), PersistentDataType.DOUBLE);
     Double lastLoginY = dataContainer.get(new NamespacedKey(plugin, "lastloginy"), PersistentDataType.DOUBLE);
     Double lastLoginZ = dataContainer.get(new NamespacedKey(plugin, "lastloginz"), PersistentDataType.DOUBLE);
-    String lastLoginWorldName = dataContainer.get(new NamespacedKey(plugin, "lastloginworld"), PersistentDataType.STRING);
+    Float lastLoginYaw = dataContainer.get(new NamespacedKey(plugin, "lastloginyaw"), PersistentDataType.FLOAT);
+    Float lastLoginPitch = dataContainer.get(new NamespacedKey(plugin, "lastloginyaw"), PersistentDataType.FLOAT);
 
     //Default to the default spawn location
     Location properLocation = getDefaultSpawn();
 
     //If the last login location can be parsed then the player is teleported to that instead.
-    if (lastLoginX != null && lastLoginY != null && lastLoginZ != null && lastLoginWorldName != null) {
-        properLocation = new Location(Bukkit.getWorld(lastLoginWorldName), lastLoginX, lastLoginY, lastLoginZ);
+    if (lastLoginWorldName != null && lastLoginX != null && lastLoginY != null && lastLoginZ != null && lastLoginYaw != null && lastLoginPitch != null) {
+        properLocation = new Location(Bukkit.getWorld(lastLoginWorldName), lastLoginX, lastLoginY, lastLoginZ, lastLoginYaw, lastLoginPitch);
     }
 
     BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, new Teleport(player, properLocation), 2, Config.teleport_retryInterval.getIntegerConfig());
