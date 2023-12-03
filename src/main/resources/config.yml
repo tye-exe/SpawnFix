@@ -1,3 +1,5 @@
+#See https://github.com/Mapty231/SpawnFix/blob/master/README.md#config-guide for the config guide.
+
 default:
   x: 0
   y: 64
@@ -9,4 +11,5 @@ teleport:
   retryInterval: 2
 
 login: "every"
-onSpawn: true
+onSpawn: "every"
+lang: "eng"
