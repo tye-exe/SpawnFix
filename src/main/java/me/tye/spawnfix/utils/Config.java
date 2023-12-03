@@ -1,25 +1,49 @@
 package me.tye.spawnfix.utils;
 
+import org.checkerframework.checker.units.qual.K;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static me.tye.spawnfix.utils.Util.log;
 
 public enum Config {
 
-  default_x,
-  default_y,
-  default_z,
-  default_worldName,
+  default_x(Double.class),
+  default_y(Double.class),
+  default_z(Double.class),
+  default_worldName(String.class),
 
-  teleport_times,
-  teleport_retryInterval,
+  teleport_times(Integer.class),
+  teleport_retryInterval(Integer.class),
 
-  login,
-  onSpawn,
-  lang;
+  login(Occurrence.class),
+  onSpawn(Occurrence.class),
+  lang(String.class);
+
+
+
+/**
+ * @param type Should be set to the class of the object this enum will be parsed as. This checks that the config values entered are valid for the used key.
+ */
+Config(Class type) {
+  this.type = type;
+}
+
+/**
+ Stores the class this object should be parsed as.
+ */
+private final Class type;
+
+/**
+ * @return The class of the object this enum should be parsed as.
+ */
+private Class getType() {
+  return type;
+}
 
 
 /**
@@ -61,6 +85,9 @@ public @NotNull Double getDoubleConfig() {
   return Double.parseDouble(getStringConfig());
 }
 
+/**
+ Enum for how often spawnFix should act for a certain feature.
+ */
 public enum Occurrence {
   NEVER,
   FIRST,
@@ -80,14 +107,23 @@ public @NotNull Occurrence getOccurrenceConfig() {
 public static void init() {
   //Loads the default values into the config.
   HashMap<String,Object> internalConfig = Util.parseInternalYaml("config.yml");
+
   internalConfig.forEach((String key, Object value) -> {
     String formattedKey = key.replace('.', '_');
 
     try {
-      configs.put(Config.valueOf(formattedKey), value);
+      Config config = Config.valueOf(formattedKey);
+
+      if (!validate(config, value)) {
+        //Dev warning
+        throw new RuntimeException("\""+config+"\" cannot be parsed as given object. - Dev warning");
+      }
+
+      configs.put(config, value);
+
     } catch (IllegalArgumentException e) {
       //Dev warning
-      throw new RuntimeException(formattedKey + " isn't in default config file.");
+      throw new RuntimeException("\""+formattedKey + "\" isn't in default config file.  - Dev warning");
     }
   });
 
@@ -96,7 +132,7 @@ public static void init() {
     if (configs.containsKey(config)) continue;
 
     //Dev warning.
-    throw new RuntimeException(config+" isn't in default config file.");
+    throw new RuntimeException("\""+config+"\" isn't in default config file.  - Dev warning");
   }
 }
 
@@ -111,28 +147,80 @@ public static void load() {
   HashMap<Config, Object> userConfigs = new HashMap<>();
 
   //Gets the default keys that the user has entered.
-  externalConfigs.forEach((String key, Object value) -> {
+  for (Map.Entry<String, Object> entry : externalConfigs.entrySet()) {
+    String key = entry.getKey();
+    Object value = entry.getValue();
+
     String formattedKey = key.replace('.', '_');
+    Config config = Config.valueOf(formattedKey);
+
+    if (!validate(config, value)) {
+      log.warning(Lang.excepts_invalidValue.getResponse(Key.key.replaceWith(key), Key.filePath.replaceWith(externalConfigFile.getAbsolutePath())));
+      continue;
+    }
 
     //logs an exception if the key doesn't exist.
     try {
-      Config config = Config.valueOf(formattedKey);
       userConfigs.put(config, value);
+
     } catch (IllegalArgumentException e) {
-      log.warning(Lang.excepts_invalidConfigKey.getResponse(Key.key.replaceWith(key)));
+      log.warning(Lang.excepts_invalidKey.getResponse(Key.key.replaceWith(key)));
     }
-  });
+  }
 
 
   //Warns the user about any config keys they are missing.
   for (Config config : configs.keySet()) {
     if (userConfigs.containsKey(config)) continue;
 
-    String formattedKey = config.toString().replace('.', '_');
-    log.warning(Lang.excepts_missingConfigKey.getResponse(Key.key.replaceWith(formattedKey)));
+    log.warning(Lang.excepts_missingKey.getResponse(Key.key.replaceWith(config.toString()), Key.filePath.replaceWith(externalConfigFile.getAbsolutePath())));
   }
 
   configs.putAll(userConfigs);
+}
+
+/**
+ Checks if config can be parsed as its intended object.
+ * @param config The config to check.
+ * @param value The value of the config.
+ * @return True if the config can be parsed as its intended object. False if it can't.
+ */
+private static boolean validate(Config config, Object value) {
+  Class configType = config.getType();
+
+  //Strings can always be parsed.
+  if (configType.equals(String.class)) return true;
+
+  String stringValue = String.valueOf(value);
+
+  if (configType.equals(Double.class)) {
+    try {
+      Double.parseDouble(stringValue);
+      return true;
+    } catch (Exception ignore) {
+      return false;
+    }
+  }
+
+  if (configType.equals(Occurrence.class)) {
+    try {
+      Occurrence.valueOf(stringValue.toUpperCase());
+      return true;
+    } catch (Exception ignore) {
+      return false;
+    }
+  }
+
+  if (configType.equals(Integer.class)) {
+    try {
+      Integer.valueOf(stringValue);
+      return true;
+    } catch (Exception ignore) {
+      return false;
+    }
+  }
+
+  throw new RuntimeException("Validation for class \""+configType+"\" does not exist! - Dev warning.");
 }
 
 }

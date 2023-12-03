@@ -1,5 +1,6 @@
 package me.tye.spawnfix.utils;
 
+import org.checkerframework.checker.units.qual.K;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -9,10 +10,9 @@ import static me.tye.spawnfix.utils.Util.*;
 
 public enum Lang {
 
-  excepts_invalidLangKey,
-  excepts_invalidConfigKey,
-  excepts_missingLangKey,
-  excepts_missingConfigKey,
+  excepts_invalidKey,
+  excepts_invalidValue,
+  excepts_missingKey,
   excepts_fileCreation,
   excepts_fileRestore,
   excepts_parseYaml,
@@ -33,7 +33,14 @@ public @NotNull String getResponse(@NotNull Key... keys) {
   String response = this.getResponse();
 
   for (Key key : keys) {
-    response = response.replaceAll("\\{"+key+"}", key.getReplaceWith());
+    String replaceString = key.getReplaceWith();
+
+    //For windows file paths the "\" wouldn't get logged so it's escaped.
+    if (key.equals(Key.filePath)) {
+      replaceString = replaceString.replaceAll("\\\\", "\\\\\\\\");
+    }
+
+    response = response.replaceAll("\\{"+key+"}", replaceString);
   }
 
   return response;
@@ -108,7 +115,7 @@ public static void load() {
     try {
       userLangs.put(Lang.valueOf(formattedKey), value.toString());
     } catch (IllegalArgumentException e) {
-      Util.log.warning(Lang.excepts_invalidLangKey.getResponse(Key.key.replaceWith(key)));
+      Util.log.warning(Lang.excepts_invalidKey.getResponse(Key.key.replaceWith(key), Key.filePath.replaceWith(externalFile.getAbsolutePath())));
     }
   });
 
@@ -117,7 +124,7 @@ public static void load() {
     if (userLangs.containsKey(lang)) continue;
 
     String formattedKey = lang.toString().replace('.', '_');
-    log.warning(Lang.excepts_missingLangKey.getResponse(Key.key.replaceWith(formattedKey)));
+    log.warning(Lang.excepts_missingKey.getResponse(Key.key.replaceWith(formattedKey), Key.filePath.replaceWith(externalFile.getAbsolutePath())));
   }
 
   langs.putAll(userLangs);
