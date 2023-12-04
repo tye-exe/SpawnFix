@@ -9,6 +9,10 @@ import java.util.HashMap;
 import static me.tye.spawnfix.utils.Util.*;
 
 public enum Lang {
+  commands_setSpawn,
+  commands_unableToSet,
+  commands_teleported,
+  commands_reload,
 
   excepts_invalidKey,
   excepts_invalidValue,

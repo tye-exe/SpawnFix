@@ -278,15 +278,130 @@ private static String preserveEscapedQuotes(Object value) {
   return correctString.toString();
 }
 
-public static void writeYamlData(String key, Object value, File externalYaml) {
+/**
+ Writes the new value to the key in the specified external yaml file.
+ * @param key The key to replace the value of.
+ * @param value The new string to overwrite the old value with.
+ * @param externalYaml The external yaml to perform this operation on.
+ * @throws IOException If there was an error reading or writing data to the Yaml file.
+ */
+public static void writeYamlData(@NotNull String key, @NotNull String value, @NotNull File externalYaml) throws IOException {
+  String fileContent;
 
+  //Reads the content from the file.
   try (FileInputStream externalYamlInputStream = new FileInputStream(externalYaml)) {
-    new Yaml().load(externalYamlInputStream);
+    fileContent = new String(externalYamlInputStream.readAllBytes());
+  }
 
+  //TODO: Make method check for whole key instead of starts with to avoid false positives.
+  Integer valueStartPosition = findKeyPosition(key, fileContent);
+  if (valueStartPosition == null) throw new IOException("Unable to find "+key+" in external Yaml file.");
 
+  int valueLineEnd = valueStartPosition;
+  //Finds the index of the end of the line that the key is on.
+  while (fileContent.charAt(valueLineEnd) != '\n') {
+    valueLineEnd++;
+  }
 
-  } catch (IOException e) {
-    throw new RuntimeException(e);
+  String firstPart = fileContent.substring(0, valueStartPosition);
+  String secondPart = fileContent.substring(valueLineEnd, fileContent.length()-1);
+
+  String newFileContent = firstPart.concat(value).concat(secondPart);
+
+  try (FileWriter externalYamlWriter = new FileWriter(externalYaml)) {
+    externalYamlWriter.write(newFileContent);
   }
 }
+
+/**
+ Finds the given key index in the given file content split on each new line.<br>
+ The key should be given in the format "example.key1".
+ * @param key The given key
+ * @param fileContent The given file content.
+ * @return The index of the char a space after the end of the last key.<br>
+ * Example: "key1:  !" the char index that the '!' is on.<br>
+ * Or null if the key couldn't be found.
+ */
+private static @Nullable Integer findKeyPosition(@NotNull String key, @NotNull String fileContent) {
+  String[] splitKey = key.split("\\.");
+
+  //Iterates over each line in the file content.
+  String[] split = fileContent.split("\n");
+
+  for (int keyLine = 0, splitLength = split.length; keyLine < splitLength; keyLine++) {
+    String strippedLine = split[keyLine].stripLeading();
+
+    //if it doesn't start with the key value then continue
+    if (!strippedLine.startsWith(splitKey[0])) {
+      continue;
+    }
+
+    return findKeyPosition(key, keyLine+1, 1, fileContent);
+
+  }
+
+  return null;
+}
+
+/**
+ Gets the index for the line of the last sub-key given in the given fileContent.<br>
+ This method executes recursively.
+ * @param key The key to find in the file.
+ * @param startLine The index of the line to start the search from.
+ * @param keyIndex The index of the sub-key that is searched for.
+ * @param fileContent The content of the file to search through.
+ * @return The index of the char a space after the end of the last key.<br>
+ * Example: "key1:  !" the char index that the '!' is on.<br>
+ * Or null if the key couldn't be found.
+ */
+private static @Nullable Integer findKeyPosition(@NotNull String key, int startLine, int keyIndex, @NotNull String fileContent) {
+  String[] splitKey = key.split("\\.");
+
+  //Iterates over each line in the file content.
+  String[] split = fileContent.split("\n");
+
+  for (int lineIndex = startLine, splitLength = split.length; lineIndex < splitLength; lineIndex++) {
+
+    String line = split[lineIndex];
+
+    //returns null if the key doesn't exist as a sub-key of the base key.
+    if (!(line.startsWith(" ") || line.startsWith("\t"))) {
+      return null;
+    }
+
+    String strippedLine = line.stripLeading();
+
+    //if it doesn't start with the key value then continue
+    if (!strippedLine.startsWith(splitKey[keyIndex])) {
+      continue;
+    }
+
+    keyIndex++;
+
+    //returns the char position that the key ends on if it is the last key in the sequence.
+    if (keyIndex == splitKey.length) {
+
+      int currentLinePosition = 0;
+      //Gets the char position of the current line within the string.
+      for (int i = 0; i < lineIndex; i++) {
+        currentLinePosition+=split[lineIndex].length();
+      }
+
+      //Finds the char position a space after the key ends.
+      for (int i = currentLinePosition; i < fileContent.length(); i++) {
+        char character = fileContent.charAt(i);
+
+        if (character != ':') continue;
+
+        return i+2;
+
+      }
+    }
+
+    return findKeyPosition(key, startLine, keyIndex, fileContent);
+  }
+
+  return null;
+}
+
 }
