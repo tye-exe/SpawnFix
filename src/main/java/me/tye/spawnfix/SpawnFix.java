@@ -1,6 +1,6 @@
 package me.tye.spawnfix;
 
-import me.tye.spawnfix.commands.SpawnFixCommand;
+import me.tye.spawnfix.commands.Commands;
 import me.tye.spawnfix.commands.TabComplete;
 import me.tye.spawnfix.utils.Config;
 import me.tye.spawnfix.utils.Lang;
@@ -34,7 +34,7 @@ public void onEnable() {
     getServer().getPluginManager().registerEvents(new PlayerRespawn(), this);
 
     //Commands
-    Objects.requireNonNull(getCommand("sf")).setExecutor(new SpawnFixCommand());
+    Objects.requireNonNull(getCommand("sf")).setExecutor(new Commands());
     Objects.requireNonNull(getCommand("sf")).setTabCompleter(new TabComplete());
 }
 

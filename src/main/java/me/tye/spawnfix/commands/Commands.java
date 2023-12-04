@@ -9,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.K;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -17,18 +16,20 @@ import java.util.logging.Level;
 
 import static me.tye.spawnfix.utils.Util.*;
 
-public class SpawnFixCommand implements CommandExecutor {
+public class Commands implements CommandExecutor {
 @Override
 public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
   if (!commandSender.hasPermission("sf")) return true;
 
   if (args.length != 1) return true;
 
-  //Sets the new spawn to the players position.
-  if (args[0].equals("setSpawn")) {
-    if (!(commandSender instanceof Player)) return true;
-    Player player = (Player) commandSender;
+  switch (args[0]) {
 
+  //Sets the new spawn to the players position.
+  case "setSpawn" -> {
+    if (!(commandSender instanceof Player)) return true;
+
+    Player player = (Player) commandSender;
     Location currentLocation = player.getLocation();
 
     String worldName = currentLocation.getWorld().getName();
@@ -37,7 +38,6 @@ public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command 
     double z = currentLocation.getZ();
     float yaw = currentLocation.getYaw();
     float pitch = currentLocation.getPitch();
-
 
     try {
       writeYamlData("default.worldName", worldName, configFile);
@@ -54,12 +54,11 @@ public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command 
 
     //reloads the config values
     Config.load();
-
     player.sendMessage(Lang.commands_setSpawn.getResponse());
   }
 
   //Teleports the player to the set spawn.
-  if (args[0].equals("tp")) {
+  case "tp" -> {
     if (!(commandSender instanceof Player)) return true;
     Player player = (Player) commandSender;
 
@@ -69,11 +68,20 @@ public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command 
   }
 
   //Reloads the config values for SpawnFix.
-  if (args[0].equals("reload")) {
+  case "reload" -> {
     Config.load();
     Lang.load();
 
     commandSender.sendMessage(Lang.commands_reload.getResponse());
+  }
+
+  default -> {
+    commandSender.sendMessage(Lang.commands_help_help.getResponse());
+    commandSender.sendMessage(Lang.commands_help_setSpawn.getResponse());
+    commandSender.sendMessage(Lang.commands_help_tp.getResponse());
+    commandSender.sendMessage(Lang.commands_help_reload.getResponse());
+  }
+
   }
 
   return true;

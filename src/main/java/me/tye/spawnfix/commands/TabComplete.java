@@ -26,7 +26,7 @@ public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull
     token = args[0];
   }
 
-  StringUtil.copyPartialMatches(token, List.of("setSpawn", "tp", "reload"), completions);
+  StringUtil.copyPartialMatches(token, List.of("setSpawn", "tp", "reload", "help"), completions);
 
   return completions;
 }

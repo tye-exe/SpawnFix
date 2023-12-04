@@ -12,6 +12,12 @@ commands:
   teleported: "Teleported to set spawn."
   reload: "Configs reloaded."
 
+  help:
+    help: "help - Shows this message."
+    reload: "reload = Makes SpawnFix rescan the config files for any changes."
+    setSpawn: "setSpawn - Sets the default spawn correction for SpawnFix to the point you're standing at."
+    tp: "tp - Teleports you to the default spawn correction for SpawnFix."
+
 excepts:
   invalidKey: "\"{key}\" is not a valid key for SpawnFix in \"{filePath}\"!\nThis error can be ignored as the invalid key will have no effect."
   invalidValue: "\"{value}\" for \"{key}\" could not be parsed from \"{filePath}\"! Reverting back to default value"

@@ -20,6 +20,10 @@ public enum Lang {
   commands_unableToSet,
   commands_teleported,
   commands_reload,
+  commands_help_help,
+  commands_help_reload,
+  commands_help_setSpawn,
+  commands_help_tp,
 
   excepts_invalidKey,
   excepts_invalidValue,
