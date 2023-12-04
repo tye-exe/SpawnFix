@@ -1,12 +1,17 @@
+#See https://github.com/Mapty231/SpawnFix/blob/master/README.md#config-guide for the config guide.
+
 default:
+  worldName: "world"
   x: 0
   y: 64
   z: 0
-  worldName: "world"
+  yaw: 0.0
+  pitch: 0.0
 
 teleport:
   times: 10
   retryInterval: 2
 
 login: "every"
-onSpawn: true
+onSpawn: "every"
+lang: "eng"
