@@ -2,3 +2,13 @@ name: SpawnFix
 version: '${project.version}'
 main: me.tye.spawnfix.SpawnFix
 api-version: '1.17'
+
+commands:
+  sf:
+    description: The main base command for SpawnFix.
+    permission: spawnFix
+
+permissions:
+  spawnFix:
+    description: Allows the user to run SpawnFix commands.
+    default: op

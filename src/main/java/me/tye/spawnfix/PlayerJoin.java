@@ -46,7 +46,7 @@ public static void PlayerSpawn(PlayerJoinEvent e) {
     Double lastLoginY = dataContainer.get(new NamespacedKey(plugin, "lastloginy"), PersistentDataType.DOUBLE);
     Double lastLoginZ = dataContainer.get(new NamespacedKey(plugin, "lastloginz"), PersistentDataType.DOUBLE);
     Float lastLoginYaw = dataContainer.get(new NamespacedKey(plugin, "lastloginyaw"), PersistentDataType.FLOAT);
-    Float lastLoginPitch = dataContainer.get(new NamespacedKey(plugin, "lastloginyaw"), PersistentDataType.FLOAT);
+    Float lastLoginPitch = dataContainer.get(new NamespacedKey(plugin, "lastloginpitch"), PersistentDataType.FLOAT);
 
     //Default to the default spawn location
     Location properLocation = getDefaultSpawn();

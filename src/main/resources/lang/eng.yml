@@ -1,3 +1,9 @@
+commands:
+  setSpawn: "Set the new spawn point to your current position."
+  unableToSet: "Unable to write new spawn values to \"{filePath}\". Please enter the new values manually."
+  teleported: "Teleported to set spawn."
+  reload: "Configs reloaded."
+
 excepts:
   invalidKey: "\"{key}\" is not a valid key for SpawnFix in \"{filePath}\"!\nThis error can be ignored as the invalid key will have no effect."
   invalidValue: "\"{value}\" for \"{key}\" could not be parsed from \"{filePath}\"! Reverting back to default value"
