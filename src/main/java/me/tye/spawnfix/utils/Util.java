@@ -53,7 +53,9 @@ public static Location getDefaultSpawn() {
   return new Location(Bukkit.getWorld(Config.default_worldName.getStringConfig()),
       Config.default_x.getDoubleConfig(),
       Config.default_y.getDoubleConfig(),
-      Config.default_z.getDoubleConfig()
+      Config.default_z.getDoubleConfig(),
+      Config.default_yaw.getFloatConfig(),
+      Config.default_pitch.getFloatConfig()
   );
 }
 
