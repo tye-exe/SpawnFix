@@ -38,12 +38,12 @@ public void run() {
   }
 
   if (location == null ) {
-    plugin.getLogger().warning("Unable to get location to correct the spawn to.");
+    plugin.getLogger().warning(Lang.teleport_noLocation.getResponse());
     return;
   }
 
   if (player == null) {
-    plugin.getLogger().warning("Unable to get player to the spawn of.");
+    plugin.getLogger().warning(Lang.teleport_noPlayer.getResponse());
     return;
   }
 

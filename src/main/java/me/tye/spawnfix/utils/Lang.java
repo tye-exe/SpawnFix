@@ -9,6 +9,13 @@ import java.util.HashMap;
 import static me.tye.spawnfix.utils.Util.*;
 
 public enum Lang {
+
+  startUp_readMe,
+  startUp_link,
+
+  teleport_noLocation,
+  teleport_noPlayer,
+
   commands_setSpawn,
   commands_unableToSet,
   commands_teleported,

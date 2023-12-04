@@ -17,10 +17,6 @@ public final class SpawnFix extends JavaPlugin {
 
 @Override
 public void onEnable() {
-
-    getLogger().log(Level.INFO, "See the readme on github for config help:");
-    getLogger().log(Level.INFO, "https://github.com/Mapty231/SpawnFix/blob/master/README.md");
-
     createRequiredFiles();
 
     Config.init();
@@ -28,6 +24,9 @@ public void onEnable() {
 
     Config.load();
     Lang.load();
+
+    getLogger().log(Level.INFO, Lang.startUp_readMe.getResponse());
+    getLogger().log(Level.INFO, Lang.startUp_link.getResponse());
 
     //Listeners
     getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
