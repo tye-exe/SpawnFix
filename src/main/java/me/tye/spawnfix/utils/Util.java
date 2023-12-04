@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -277,4 +278,15 @@ private static String preserveEscapedQuotes(Object value) {
   return correctString.toString();
 }
 
+public static void writeYamlData(String key, Object value, File externalYaml) {
+
+  try (FileInputStream externalYamlInputStream = new FileInputStream(externalYaml)) {
+    new Yaml().load(externalYamlInputStream);
+
+
+
+  } catch (IOException e) {
+    throw new RuntimeException(e);
+  }
+}
 }

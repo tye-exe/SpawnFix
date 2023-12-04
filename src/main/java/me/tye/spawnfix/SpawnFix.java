@@ -1,11 +1,14 @@
 package me.tye.spawnfix;
 
+import me.tye.spawnfix.commands.SpawnFixCommand;
+import me.tye.spawnfix.commands.TabComplete;
 import me.tye.spawnfix.utils.Config;
 import me.tye.spawnfix.utils.Lang;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Level;
 
 import static me.tye.spawnfix.utils.Util.*;
@@ -26,10 +29,14 @@ public void onEnable() {
     Config.load();
     Lang.load();
 
+    //Listeners
     getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
     getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
     getServer().getPluginManager().registerEvents(new PlayerRespawn(), this);
 
+    //Commands
+    Objects.requireNonNull(getCommand("sf")).setExecutor(new SpawnFixCommand());
+    Objects.requireNonNull(getCommand("sf")).setTabCompleter(new TabComplete());
 }
 
 @Override
