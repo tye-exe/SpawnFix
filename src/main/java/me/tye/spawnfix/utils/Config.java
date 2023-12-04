@@ -75,16 +75,22 @@ public @NotNull String getStringConfig() {
 /**
  * @return Gets the config response for the selected enum wrapped with Integer.parseInt().
  */
-public @NotNull Integer getIntegerConfig() {
+public int getIntegerConfig() {
   return Integer.parseInt(getStringConfig());
 }
-
 
 /**
  * @return Gets the config response for the selected enum wrapped with Double.parseDouble().
  */
-public @NotNull Double getDoubleConfig() {
+public double getDoubleConfig() {
   return Double.parseDouble(getStringConfig());
+}
+
+/**
+ * @return Gets the config response for the selected enum wrapped with Float.parseFloat().
+ */
+public float getFloatConfig() {
+  return Float.parseFloat(getStringConfig());
 }
 
 /**
